@@ -1,13 +1,14 @@
 package ru.practicum.mapper;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.ViewStats;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class EndpointHitMapper {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -17,17 +18,17 @@ public class EndpointHitMapper {
             return null;
         }
 
-        EndpointHit.EndpointHitBuilder endpointHit = EndpointHit.builder();
+        EndpointHit endpointHit = new EndpointHit();
 
-        endpointHit.app(endpointHitDto.getApp());
-        endpointHit.uri(endpointHitDto.getUri());
-        endpointHit.ip(endpointHitDto.getIp());
+        endpointHit.setApp(endpointHitDto.getApp());
+        endpointHit.setUri(endpointHitDto.getUri());
+        endpointHit.setIp(endpointHitDto.getIp());
 
-        if (endpointHitDto.getTimestamp() != null) {
-            endpointHit.timestamp(String.valueOf(LocalDateTime.parse(endpointHitDto.getTimestamp(), formatter)));
+        if (endpointHitDto.getCreated() != null) {
+            endpointHit.setCreated(endpointHitDto.getCreated());
         }
 
-        return endpointHit.build();
+        return endpointHit;
     }
 
     public EndpointHitDto toEndpointHitDto(EndpointHit endpointHit) {
@@ -35,17 +36,17 @@ public class EndpointHitMapper {
             return null;
         }
 
-        EndpointHitDto.EndpointHitDtoBuilder endpointHitDto = EndpointHitDto.builder();
+        EndpointHitDto endpointHitDto = new EndpointHitDto();
 
-        endpointHitDto.app(endpointHit.getApp());
-        endpointHitDto.uri(endpointHit.getUri());
-        endpointHitDto.ip(endpointHit.getIp());
+        endpointHitDto.setApp(endpointHit.getApp());
+        endpointHitDto.setUri(endpointHit.getUri());
+        endpointHitDto.setIp(endpointHit.getIp());
 
-        if (endpointHit.getTimestamp() != null) {
-            endpointHitDto.timestamp(endpointHit.getTimestamp().format(String.valueOf(formatter)));
+        if (endpointHit.getCreated() != null) {
+            endpointHitDto.setCreated(endpointHit.getCreated());
         }
 
-        return endpointHitDto.build();
+        return endpointHitDto;
     }
 
     public ViewStatsDto toViewStatsDto(ViewStats viewStats) {
@@ -53,12 +54,12 @@ public class EndpointHitMapper {
             return null;
         }
 
-        ViewStatsDto.ViewStatsDtoBuilder viewStatsDto = ViewStatsDto.builder();
+        ViewStatsDto viewStatsDto = new ViewStatsDto();
 
-        viewStatsDto.app(viewStats.getApp());
-        viewStatsDto.uri(viewStats.getUri());
-        viewStatsDto.hits(viewStats.getHits());
+        viewStatsDto.setApp(viewStats.getApp());
+        viewStatsDto.setUri(viewStats.getUri());
+        viewStatsDto.setHits(viewStats.getHits());
 
-        return viewStatsDto.build();
+        return viewStatsDto;
     }
 }

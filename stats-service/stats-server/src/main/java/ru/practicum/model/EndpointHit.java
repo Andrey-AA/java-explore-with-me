@@ -22,6 +22,13 @@ public class EndpointHit {
     private String uri;
     private String ip;
 
-    @Column(name = "created")
-    private String timestamp;
+    private LocalDateTime created;
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
 }
