@@ -6,6 +6,7 @@ import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.model.ViewStats;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Component
@@ -26,6 +27,8 @@ public class EndpointHitMapper {
 
         if (endpointHitDto.getCreated() != null) {
             endpointHit.setCreated(endpointHitDto.getCreated());
+        }else{
+            endpointHit.setCreated(LocalDateTime.now());
         }
 
         return endpointHit;
