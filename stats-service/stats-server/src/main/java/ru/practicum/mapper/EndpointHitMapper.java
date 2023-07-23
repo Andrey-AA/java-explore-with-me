@@ -27,7 +27,7 @@ public class EndpointHitMapper {
 
         if (endpointHitDto.getCreated() != null) {
             endpointHit.setCreated(endpointHitDto.getCreated());
-        }else{
+        } else {
             endpointHit.setCreated(LocalDateTime.now());
         }
 
