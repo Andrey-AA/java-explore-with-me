@@ -7,12 +7,9 @@ import ru.practicum.model.EndpointHit;
 import ru.practicum.model.ViewStats;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Component
 public class EndpointHitMapper {
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public EndpointHit toEndpointHit(EndpointHitDto endpointHitDto) {
         if (endpointHitDto == null) {

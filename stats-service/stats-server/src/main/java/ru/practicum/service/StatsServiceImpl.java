@@ -60,19 +60,13 @@ public class StatsServiceImpl implements StatsService {
     }
 
     private List<ViewStats> getStatisticsWithUniqueIp(LocalDateTime start, LocalDateTime end, List<String> uris) {
-        if (uris.isEmpty()) {
-            return statsRepository.getStatisticsWithUniqueIp(start, end);
-        } else {
-            return statsRepository.getStatisticsWithUniqueIpAndUris(start, end, uris);
-        }
+        return uris.isEmpty() ? statsRepository.getStatisticsWithUniqueIp(start, end) : statsRepository.getStatisticsWithUniqueIpAndUris(start, end, uris);
+
     }
 
     private List<ViewStats> getAllStatistics(LocalDateTime start, LocalDateTime end, List<String> uris) {
-        if (uris.isEmpty()) {
-            return statsRepository.getAllStatistics(start, end);
-        } else {
-            return statsRepository.getAllStatisticsWithUris(start, end, uris);
-        }
+        return uris.isEmpty() ? statsRepository.getAllStatistics(start, end) : statsRepository.getAllStatisticsWithUris(start, end, uris);
+
     }
 
     private LocalDateTime parseTime(String date) {
