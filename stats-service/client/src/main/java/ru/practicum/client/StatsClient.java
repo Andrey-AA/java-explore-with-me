@@ -1,19 +1,24 @@
 package ru.practicum.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-@Service
+@Slf4j
+@Component
 public class StatsClient extends BaseClient {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -24,19 +29,36 @@ public class StatsClient extends BaseClient {
                         .build()
         );
     }
+//    @Autowired
+//    public StatsClient(RestTemplateBuilder builder) {
+//        super(
+//                builder
+//                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
+//                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+//                        .build()
+//        );
+//    }
 
-    public ResponseEntity<Object> addStatistic(EndpointHitDto endpointHitDto) {
-        return post("/hit", endpointHitDto);
+    public ResponseEntity<Object> addStat(EndpointHitDto createStatDto) {
+        return post("/hit", createStatDto);
     }
 
-    public ResponseEntity<Object> getStatistic(String start, String end, List<String> uris, Boolean unique) {
+    public List<ViewStatsDto> getStat(LocalDateTime start, LocalDateTime end, Collection<String> uris, Boolean unique) {
         Map<String, Object> parameters = Map.of(
-                "start", start,
-                "end", end,
+                "start", start.format(formatter),
+                "end", end.format(formatter),
                 "uris", String.join(",", uris),
                 "unique", unique
         );
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-    }
+        String queryString = "?start={start}&end={end}&uris={uris}&unique={unique}";
 
+        ResponseEntity<ViewStatsDto[]> responseEntity = get("/stats" + queryString, null, parameters);
+
+        ViewStatsDto[] stats = responseEntity.getBody();
+
+        if (stats != null && stats.length > 0) {
+            return Arrays.asList(stats);
+        }
+        return new ArrayList<>();
+    }
 }
