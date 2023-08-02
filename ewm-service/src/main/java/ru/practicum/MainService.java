@@ -15,7 +15,6 @@ public class MainService {
 
         Map<String, Object> props = new HashMap<>();
         props.put("stats-server.url", "http://stats-server:9090");
-//        props.put("stats-server.url", "http://localhost:9090");
         app.setDefaultProperties(props);
         app.run(args);
     }
