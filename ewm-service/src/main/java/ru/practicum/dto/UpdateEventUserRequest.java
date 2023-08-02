@@ -15,28 +15,28 @@ import java.time.LocalDateTime;
 public class UpdateEventUserRequest {
 
     @Size(min = 20, max = 2000)
-    String annotation;//
+    private String annotation;//
 
-    Integer category;//
+    private Integer category;//
 
     @Size(min = 20, max = 7000)
-    String description;
+    private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime eventDate;//
+    private LocalDateTime eventDate;//
 
-    LocationDto location;
+    private LocationDto location;
 
-    Boolean paid;//
+    private Boolean paid;//
 
-    Integer participantLimit;
+    private Integer participantLimit;
 
-    LocalDateTime publishedOn;
+    private LocalDateTime publishedOn;
 
-    Boolean requestModeration;
+    private Boolean requestModeration;
 
-    StateAction stateAction;
+    private StateAction stateAction;
 
     @Size(min = 3, max = 120)
-    String title;//
+    private String title;//
 }

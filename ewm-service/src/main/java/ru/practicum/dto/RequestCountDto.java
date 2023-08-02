@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RequestCountDto {
 
-    Integer eventId;
+    private Integer eventId;
 
-    Long requestCount;
+    private Long requestCount;
 }

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -31,7 +30,9 @@ public class EventService {
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
     private final StatsClient statsClient;
-    DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter;
+
+    private static final int MIN_HOURS_BEFORE_EVENT = 2;
 
     @Autowired
     public EventService(EventRepository eventRepository, UserRepository userRepository,
@@ -48,6 +49,16 @@ public class EventService {
 
     @Transactional
     public EventFullDto createEvent(int userId, NewEventDto newEventDto) {
+
+        LocalDateTime minEventDateTime = LocalDateTime.now().plusHours(MIN_HOURS_BEFORE_EVENT);
+        if (newEventDto.getEventDate().isBefore(minEventDateTime)) {
+            String errorMessage = String.format(
+                    "Обратите внимание: дата и время на которые намечено событие не может быть раньше, " +
+                            "чем через %d часа(ов) от текущего момента: %s", MIN_HOURS_BEFORE_EVENT, newEventDto.getEventDate());
+            log.info(errorMessage);
+            throw new RequestNotValidException(errorMessage);
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь с userId = " + userId + " не найден"));
 
@@ -84,6 +95,16 @@ public class EventService {
 
     @Transactional
     public EventFullDto updateEventByInitiator(int userId, int eventId, UpdateEventUserRequest updateEventUserRequest) {
+        LocalDateTime updatedEventDate = updateEventUserRequest.getEventDate();
+
+        if (updatedEventDate != null && updatedEventDate.isBefore(LocalDateTime.now())) {
+            String errorMessage = String.format(
+                    "Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента: %s",
+                    updatedEventDate);
+            log.info(errorMessage);
+            throw new RequestNotValidException(errorMessage);
+        }
+
         User user = getUserById(userId);
         Event event = getEventById(eventId);
 
@@ -116,58 +137,53 @@ public class EventService {
     }
 
     private void validateEventState(Event event) {
-        if (!event.getState().equals(State.REJECTED) && !event.getState().equals(State.PENDING)) {
+        if (event.getState() != State.REJECTED && event.getState() != State.PENDING) {
             throw new RequestConflictException("изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
     }
 
     private void updateEventProperties(UpdateEventUserRequest updateEventUserRequest, Event event) {
-        if (updateEventUserRequest.getAnnotation() != null) {
-            event.setAnnotation(updateEventUserRequest.getAnnotation());
-        }
 
-        if (updateEventUserRequest.getCategory() != null) {
-            int categoryId = updateEventUserRequest.getCategory();
+        Optional.ofNullable(updateEventUserRequest.getAnnotation())
+                .ifPresent(event::setAnnotation);
+
+        Optional.ofNullable(updateEventUserRequest.getCategory()).ifPresent(categoryId -> {
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new ObjectNotFoundException("Категория с Id = " + categoryId + " не найдена"));
             event.setCategory(category);
-        }
+        });
 
-        if (updateEventUserRequest.getDescription() != null) {
-            event.setDescription(updateEventUserRequest.getDescription());
-        }
+        Optional.ofNullable(updateEventUserRequest.getDescription())
+                .ifPresent(event::setDescription);
 
-        if (updateEventUserRequest.getEventDate() != null) {
-            event.setEventDate(updateEventUserRequest.getEventDate());
-        }
+        Optional.ofNullable(updateEventUserRequest.getEventDate())
+                .ifPresent(event::setEventDate);
 
-        if (updateEventUserRequest.getLocation() != null) {
-            Location location = saveNewLocation(updateEventUserRequest.getLocation());
+        Optional.ofNullable(updateEventUserRequest.getLocation()).ifPresent(locationRequest -> {
+            Location location = saveNewLocation(locationRequest);
             event.setLocation(location);
-        }
+        });
 
-        if (updateEventUserRequest.getPaid() != null) {
-            event.setPaid(updateEventUserRequest.getPaid());
-        }
+        Optional.ofNullable(updateEventUserRequest.getPaid())
+                .ifPresent(event::setPaid);
 
-        if (updateEventUserRequest.getParticipantLimit() != null) {
-            event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
-        }
+        Optional.ofNullable(updateEventUserRequest.getParticipantLimit())
+                .ifPresent(event::setParticipantLimit);
 
-        if (updateEventUserRequest.getRequestModeration() != null) {
-            event.setRequestModeration(updateEventUserRequest.getRequestModeration());
-        }
+        Optional.ofNullable(updateEventUserRequest.getRequestModeration())
+                .ifPresent(event::setRequestModeration);
 
-        if (updateEventUserRequest.getStateAction() == StateAction.SEND_TO_REVIEW) {
-            event.setState(State.PENDING);
-        }
-        if (updateEventUserRequest.getStateAction() == StateAction.CANCEL_REVIEW) {
-            event.setState(State.CANCELED);
-        }
+        Optional.ofNullable(updateEventUserRequest.getStateAction()).ifPresent(stateAction -> {
+            if (stateAction == StateAction.SEND_TO_REVIEW) {
+                event.setState(State.PENDING);
+            }
+            if (stateAction == StateAction.CANCEL_REVIEW) {
+                event.setState(State.CANCELED);
+            }
+        });
 
-        if (updateEventUserRequest.getTitle() != null) {
-            event.setTitle(updateEventUserRequest.getTitle());
-        }
+        Optional.ofNullable(updateEventUserRequest.getTitle())
+                .ifPresent(event::setTitle);
     }
 
 
@@ -212,11 +228,8 @@ public class EventService {
         List<ViewStatsDto> stat = getStat(LocalDateTime.now().minusYears(20), LocalDateTime.now().plusYears(100),
                 Collections.singleton("/events/" + eventId), Boolean.TRUE);
 
-        if (stat.isEmpty()) {
-            return EventMapper.toEventFullDto(event, user, requestCountDto.getRequestCount(), 0);
-        } else {
-            return EventMapper.toEventFullDto(event, user, requestCountDto.getRequestCount(), stat.get(0).getHits());
-        }
+        return stat.isEmpty() ? EventMapper.toEventFullDto(event, user, requestCountDto.getRequestCount(), 0) : EventMapper.toEventFullDto(event, user, requestCountDto.getRequestCount(), stat.get(0).getHits());
+
     }
 
     @Transactional(readOnly = true)
@@ -239,7 +252,6 @@ public class EventService {
             stateList = null;
         }
         List<Event> eventList = eventRepository.findByUserStateCategoryStartEndOrderByIdDesc(params.getUsers(), stateList, params.getCategories(), start, end, pageable);
-//        eventList.sort(Comparator.comparing(Event::getId));
 
         List<Integer> eventIdList = new ArrayList<>();
         for (Event event : eventList) {
@@ -258,6 +270,12 @@ public class EventService {
 
     @Transactional
     public EventFullDto updateEventByAdmin(int eventId, UpdateEventAdminDto updateEventAdminDto) {
+        if (updateEventAdminDto.getEventDate() != null && updateEventAdminDto.getEventDate().isBefore(LocalDateTime.now())) {
+            log.info("Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента: {}", updateEventAdminDto.getEventDate());
+
+            throw new RequestNotValidException("Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента");
+        }
+
         Event event = fetchEventById(eventId);
         validateEventPublishTime(event);
         updateEventBasedOnAdminAction(updateEventAdminDto, event);
@@ -439,12 +457,10 @@ public class EventService {
         List<ViewStatsDto> stat = getStat(LocalDateTime.now().minusYears(20), LocalDateTime.now().plusYears(100),
                 Collections.singleton("/events/" + eventId), Boolean.TRUE);
 
-        if (stat.isEmpty()) {
-            return EventMapper.toEventFullDto(event, event.getInitiator(),
-                    requestCountDto.getRequestCount(), 0);
-        } else {
-            return EventMapper.toEventFullDto(event, event.getInitiator(),
-                    requestCountDto.getRequestCount(), stat.get(0).getHits());
-        }
+        return stat.isEmpty() ? EventMapper.toEventFullDto(event, event.getInitiator(),
+                requestCountDto.getRequestCount(), 0)
+                : EventMapper.toEventFullDto(event, event.getInitiator(),
+                requestCountDto.getRequestCount(), stat.get(0).getHits());
+
     }
 }

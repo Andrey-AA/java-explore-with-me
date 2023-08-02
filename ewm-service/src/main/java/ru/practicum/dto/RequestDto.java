@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class RequestDto {
 
     private Integer id;
-    Integer requester;
-    Integer event;
-    RequestStatus status;
+    private Integer requester;
+    private Integer event;
+    private RequestStatus status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime created;
+    private LocalDateTime created;
 }

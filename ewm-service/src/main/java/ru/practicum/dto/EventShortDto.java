@@ -11,25 +11,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventShortDto {
 
-    Integer id;
+    private Integer id;
 
-    UserShortDto initiator;
+    private UserShortDto initiator;
 
-    String annotation;
+    private String annotation;
 
-    CategoryDto category;
+    private CategoryDto category;
 
-    LocalDateTime eventDate;
+    private LocalDateTime eventDate;
 
-    Boolean paid;
+    private Boolean paid;
 
-    Integer participantLimit;
+    private Integer participantLimit;
 
-    LocalDateTime publishedOn;
+    private LocalDateTime publishedOn;
 
-    Boolean requestModeration;
+    private Boolean requestModeration;
 
-    String title;
+    private String title;
 
-    Long views;
+    private Long views;
 }

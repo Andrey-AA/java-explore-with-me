@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestStatusUpdateResultDto {
 
-    List<RequestDto> confirmedRequests;
+    private List<RequestDto> confirmedRequests;
 
-    List<RequestDto> rejectedRequests;
+    private List<RequestDto> rejectedRequests;
 }

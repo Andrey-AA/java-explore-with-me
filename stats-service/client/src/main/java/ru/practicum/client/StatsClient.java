@@ -29,15 +29,6 @@ public class StatsClient extends BaseClient {
                         .build()
         );
     }
-//    @Autowired
-//    public StatsClient(RestTemplateBuilder builder) {
-//        super(
-//                builder
-//                        .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9090"))
-//                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-//                        .build()
-//        );
-//    }
 
     public ResponseEntity<Object> addStat(EndpointHitDto createStatDto) {
         return post("/hit", createStatDto);

@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.StatsClient;
 import ru.practicum.dto.*;
-import ru.practicum.exception.RequestNotValidException;
 import ru.practicum.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +22,6 @@ import java.util.List;
 @RequestMapping
 @Validated
 public class EventController {
-
-    private static final int MIN_HOURS_BEFORE_EVENT = 2;
     private final EventService eventService;
     private final StatsClient statsClient;
 
@@ -38,15 +35,6 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(@PathVariable int userId, @RequestBody @Valid NewEventDto newEventDto) {
 
-        LocalDateTime minEventDateTime = LocalDateTime.now().plusHours(MIN_HOURS_BEFORE_EVENT);
-        if (newEventDto.getEventDate().isBefore(minEventDateTime)) {
-            String errorMessage = String.format(
-                    "Обратите внимание: дата и время на которые намечено событие не может быть раньше, " +
-                            "чем через %d часа(ов) от текущего момента: %s", MIN_HOURS_BEFORE_EVENT, newEventDto.getEventDate());
-            log.info(errorMessage);
-            throw new RequestNotValidException(errorMessage);
-        }
-
         log.info("Добавляется событие {} пользователем с id = {}", newEventDto, userId);
         return eventService.createEvent(userId, newEventDto);
     }
@@ -56,15 +44,6 @@ public class EventController {
     public EventFullDto updateEventByInitiator(@PathVariable int userId,
                                                @PathVariable int eventId,
                                                @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest) {
-        LocalDateTime updatedEventDate = updateEventUserRequest.getEventDate();
-
-        if (updatedEventDate != null && updatedEventDate.isBefore(LocalDateTime.now())) {
-            String errorMessage = String.format(
-                    "Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента: %s",
-                    updatedEventDate);
-            log.info(errorMessage);
-            throw new RequestNotValidException(errorMessage);
-        }
 
         log.info("Пользователем с id = {} обновляет событие {} с id = {} ", userId, updateEventUserRequest, eventId);
         return eventService.updateEventByInitiator(userId, eventId, updateEventUserRequest);
@@ -105,11 +84,7 @@ public class EventController {
     @PatchMapping("/admin/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEventByAdmin(@PathVariable int eventId, @RequestBody @Valid UpdateEventAdminDto updateEventAdminDto) {
-        if (updateEventAdminDto.getEventDate() != null && updateEventAdminDto.getEventDate().isBefore(LocalDateTime.now())) {
-            log.info("Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента: {}", updateEventAdminDto.getEventDate());
 
-            throw new RequestNotValidException("Обратите внимание: дата и время на которые намечено событие не может быть раньше текущего момента");
-        }
         log.info("Админ обновляет событие с id = {}, UpdateEventAdminDto = {}  ", eventId, updateEventAdminDto);
         return eventService.updateEventByAdmin(eventId, updateEventAdminDto);
     }

@@ -14,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestStatusUpdateDto {
 
-    List<Integer> requestIds;
+    private List<Integer> requestIds;
 
     @Enumerated(EnumType.STRING)
-    RequestStatus status;
+    private RequestStatus status;
 }

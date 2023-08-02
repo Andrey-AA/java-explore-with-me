@@ -12,10 +12,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class UpdateCompilationDto {
 
-    Set<Integer> events;
+    private Set<Integer> events;
 
-    Boolean pinned;
+    private Boolean pinned;
 
     @Size(min = 1, max = 50)
-    String title;
+    private String title;
 }

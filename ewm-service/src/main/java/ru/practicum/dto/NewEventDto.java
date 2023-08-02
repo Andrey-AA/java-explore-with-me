@@ -18,31 +18,31 @@ public class NewEventDto {
     @NotNull
     @NotBlank
     @Size(min = 20, max = 2000)
-    String annotation;
+    private String annotation;
 
     @NotNull
-    Integer category;
+    private Integer category;
 
     @NotNull
     @NotBlank
     @Size(min = 20, max = 7000)
-    String description;
+    private String description;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime eventDate;
+    private LocalDateTime eventDate;
 
     @NotNull
-    LocationDto location;
+    private LocationDto location;
 
-    Boolean paid;
+    private Boolean paid;
 
-    Integer participantLimit;
+    private Integer participantLimit;
 
-    Boolean requestModeration; // Если true, то все заявки будут ожидать подтверждения инициатором события. Если false - то будут подтверждаться автоматически.
+    private Boolean requestModeration; // Если true, то все заявки будут ожидать подтверждения инициатором события. Если false - то будут подтверждаться автоматически.
 
     @NotNull
     @NotBlank
     @Size(min = 3, max = 120)
-    String title;
+    private String title;
 }
