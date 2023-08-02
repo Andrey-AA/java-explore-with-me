@@ -1,0 +1,322 @@
+{
+    "info": {
+        "_postman_id": "40a6eb0c-b5c0-4dd1-a727-ec71a27d1190",
+        "name": "feature_comments",
+        "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+        "_exporter_id": "26037651"
+    },
+    "item": [
+        {
+            "name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('userid', jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \"name\": \"John Doe\", \"email\": \"johndoe@email.com\" }"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/admin/users",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["admin", "users"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Category",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('categoryid', jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \"name\": \"New Category\" }"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/admin/categories",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["admin", "categories"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create Event",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('eventid', jsonData.id);",
+							"pm.environment.set('event', jsonData);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+					"raw": "{\"annotation\":\"Modi illum sint ut explicabo. Et cupiditate suscipit soluta fugiat non minus. Fugit aut eos voluptas sed in magni accusantium esse nulla. Dolores soluta dignissimos et omnis sunt nobis. Maxime voluptas quod. Delectus aut perferendis dolores perspiciatis delectus ullam fugit perferendis.\",\"category\":{{categoryid}},\"description\":\"Earum voluptatem consequatur maiores molestiae et officia. Dolor quia aliquam. Impedit qui illo adipisci eos dolor autem. Dolore modi iure. Cupiditate est perferendis et. Incidunt id earum provident ut iure ex. Provident hic a dolorum necessitatibus id eligendi eos consequatur rem. Nesciunt delectus facilis aliquid. Voluptas vel unde. Eos est eveniet adipisci voluptates veritatis in quas natus dignissimos. Unde numquam quas harum sit commodi amet voluptas. Autem et earum quae architecto ad magni. Nam quisquam saepe sed corrupti quia est neque maxime. Autem laudantium quo voluptas omnis occaecati commodi et non aperiam.\",\"eventDate\":\"2023-08-03 01:27:28\",\"location\":{\"lat\":-51.2532,\"lon\":-55.9849},\"paid\":\"false\",\"participantLimit\":\"626\",\"requestModeration\":\"true\",\"title\":\"Voluptas beatae modi commodi vel est vel.\"}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/users/{{userid}}/events",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["users", "{{userid}}", "events"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Add Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201', function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('commentid', jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \"text\": \"esse nulla. Dolores soluta dignissimos et omnis sunt nobis. Maxime voluptas quodesse nulla. Dolores s\" }"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/comment/users/{{userid}}/comment/{{eventid}}",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["comment", "users", "{{userid}}", "comment", "{{eventid}}"]
+                }
+            },
+            "response": []
+        },
+		{
+		"name": "Update Comment",
+		"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('commentid', jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"Это обновленный текст комментария, который является достаточно длинным для удовлетворения минимального требования по длине\" }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/comment/users/{{userid}}/comment/{{commentid}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["comment", "users", "{{userid}}", "comment", "{{commentid}}"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comment by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set('commentid', jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/comment/{{commentid}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["comment", "{{commentid}}"]
+				}
+			},
+			"response": []
+		},
+	{
+		"name": "Get Comments by User",
+		"event": [
+			{
+				"listen": "test",
+				"script": {
+					"exec": [
+						"pm.test('Status code is 200', function () {",
+						"    pm.response.to.have.status(200);",
+						"});",
+						"var jsonData = JSON.parse(responseBody);",
+						"pm.test('Response is an array', function () {",
+						"    pm.expect(Array.isArray(jsonData)).to.be.true;",
+						"});",
+						"pm.test('Array size is 1', function () {",
+						"    pm.expect(jsonData.length).to.be.eql(1);",
+						"});"
+					],
+					"type": "text/javascript"
+				}
+			}
+		],
+		"request": {
+			"method": "GET",
+			"header": [],
+			"url": {
+				"raw": "{{baseUrl}}/comment/users/{{userid}}?asc=false&from=0&size=10",
+				"host": ["{{baseUrl}}"],
+				"path": ["comment", "users", "{{userid}}"],
+				"query": [
+					{
+						"key": "asc",
+						"value": "false"
+					},
+					{
+						"key": "from",
+						"value": "0"
+					},
+					{
+						"key": "size",
+						"value": "10"
+					}
+				]
+			}
+		},
+		"response": []
+	},
+	{
+		"name": "Delete Comment By Owner",
+		"event": [
+			{
+				"listen": "test",
+				"script": {
+					"exec": [
+						"pm.test('Status code is 204', function () {",
+						"    pm.response.to.have.status(204);",
+						"});",
+						"pm.test('Response body is empty', function () {",
+						"    pm.expect(pm.response.text()).to.eql('');",
+						"});"
+					],
+					"type": "text/javascript"
+				}
+			}
+		],
+		"request": {
+			"method": "DELETE",
+			"header": [],
+			"url": {
+				"raw": "{{baseUrl}}/comment/users/{{userid}}/comment/{{commentid}}",
+				"host": ["{{baseUrl}}"],
+				"path": ["comment", "users", "{{userid}}", "comment", "{{commentid}}"]
+			}
+		},
+		"response": []
+	}
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "userid",
+            "value": "1"
+        },
+        {
+            "key": "categoryid",
+            "value": "1"
+        },
+        {
+            "key": "eventid",
+            "value": "1"
+        },
+        {
+            "key": "commentid",
+            "value": "1"
+        }
+    ]
+}

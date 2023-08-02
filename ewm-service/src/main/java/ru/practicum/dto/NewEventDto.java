@@ -39,7 +39,7 @@ public class NewEventDto {
 
     private Integer participantLimit;
 
-    private Boolean requestModeration; // Если true, то все заявки будут ожидать подтверждения инициатором события. Если false - то будут подтверждаться автоматически.
+    private Boolean requestModeration;
 
     @NotNull
     @NotBlank
