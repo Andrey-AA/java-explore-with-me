@@ -16,7 +16,6 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Slf4j
 @RestController
 @RequestMapping
@@ -79,7 +78,6 @@ public class EventController {
         log.info("Админ ищет события  с параметрами поиска {}", parameters);
         return eventService.getEventFullByAdmin(parameters);
     }
-
 
     @PatchMapping("/admin/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
