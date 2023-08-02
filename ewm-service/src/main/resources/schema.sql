@@ -67,9 +67,9 @@ CREATE TABLE IF NOT EXISTS comments (
   id SERIAL PRIMARY KEY,
   created_date TIMESTAMP,
   updated_date TIMESTAMP,
-  author_id INTEGER NOT NULL,
+  auther_id INTEGER NOT NULL,
   event_id INTEGER NOT NULL,
   text VARCHAR(2000),
-  FOREIGN KEY (author_id) REFERENCES users(id),
+  FOREIGN KEY (auther_id) REFERENCES users(id),
   FOREIGN KEY (event_id) REFERENCES events(id)
 );
