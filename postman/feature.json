@@ -111,8 +111,7 @@
 							"    pm.response.to.have.status(201);",
 							"});",
 							"var jsonData = JSON.parse(responseBody);",
-							"pm.environment.set('eventid', jsonData.id);",
-							"pm.environment.set('event', jsonData);"
+							"pm.environment.set('eventid', jsonData.id);"
 						],
 						"type": "text/javascript"
 					}
@@ -223,8 +222,7 @@
 							"pm.test('Status code is 200', function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
-							"var jsonData = JSON.parse(responseBody);",
-							"pm.environment.set('commentid', jsonData.id);"
+							"var jsonData = JSON.parse(responseBody);"
 						],
 						"type": "text/javascript"
 					}
