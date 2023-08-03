@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class EventFilterParametersDto {
+
     private String text;
     private List<Integer> categories;
     private Boolean paid;
